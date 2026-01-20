@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .content {
+      height: 200px;
+      width: 600px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #7c3aed, #182fff99);
+      box-shadow: 0 8px 32px #1f268780;
+      position: relative;
+    }
+
+    .content::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url(grain.webp);
+      filter: brightness(3);
+      background-size: 500px 500px;
+      mix-blend-mode: lighten;
+      background-repeat: repeat;
+      opacity: 1;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+  <body>
+    <div class="content">Content</div>
+  </body>
+</html>
