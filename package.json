@@ -2,8 +2,12 @@
   "name": "ui-magic-library",
   "version": "0.1.0",
   "description": "A modern UI component library for building beautiful web applications",
+  "private": true,
   "main": "dist/index.js",
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -13,5 +17,16 @@
     "library"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "next": "^16.1.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@types/node": "25.2.0",
+    "@types/react": "19.2.10",
+    "typescript": "5.9.3"
+  }
 }

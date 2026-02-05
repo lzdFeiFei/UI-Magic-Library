@@ -1,35 +1,23 @@
-# UI-Magic-Library
+# UI Magic Library
 
-A modern UI component library for building beautiful web applications.
+Interactive UI demo gallery built with Next.js. Each demo can define its own configurable controls, making it easy to
+explore visual variants and share presets.
 
-## Features
-
-- 🎨 Beautiful and customizable components
-- ⚡ Lightweight and performant
-- 📱 Responsive design
-- 🔧 Easy to integrate
-- 💪 TypeScript support
-
-## Installation
+## Local dev
 
 ```bash
-npm install ui-magic-library
+npm install
+npm run dev
 ```
 
-## Usage
+Open `http://localhost:3000` to view the gallery.
 
-```javascript
-import { Button } from 'ui-magic-library';
+## Adding a demo
 
-function App() {
-  return <Button>Click me!</Button>;
-}
-```
+1. Put the demo assets in `public/demos/<demo-name>`.
+2. Register the demo in `lib/demo-registry.ts` with metadata and controls.
+3. Optional: wire the demo HTML to read query parameters for live control.
 
-## Documentation
+## Deploy
 
-Coming soon...
-
-## License
-
-MIT
+Deploy directly on Vercel. The project is a standard Next.js app.
