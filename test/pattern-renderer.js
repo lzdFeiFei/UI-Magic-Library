@@ -76,10 +76,12 @@ class PatternRenderer {
     uniform float uFadeWidth;
     uniform float uAltPatternOpacity;
     uniform float uEnableFadeTransition;
+    uniform float uUseOriginalSvgColors;
 
-    const float TIME_SPEED = 0.15;
-    const float SPATIAL_FREQ = 0.003;
-    const float TIME_AMPLITUDE = 0.03;
+    // 原网页的时间动画参数
+    const float TIME_SPEED = 0.5;
+    const float SPATIAL_FREQ = 0.008;
+    const float TIME_AMPLITUDE = 0.1;
 
     float calculateLuminance(vec3 color) {
       return 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
@@ -110,6 +112,7 @@ class PatternRenderer {
       return color;
     }
 
+    // 原网页的采样方式
     vec4 samplePatternAtlas(int patternIndex, vec2 uv) {
       float colIndex = float(patternIndex);
       vec2 atlasOffset = vec2(colIndex / float(uPatternAtlasColumns), 0.0);
@@ -137,37 +140,48 @@ class PatternRenderer {
       return (uv * containerAspect - offset) / scaledSize;
     }
 
-    vec3 getColorForIntensity(int patternIndex, float patternAlpha, bool useOriginalColors, vec3 patternColor) {
+    vec3 getColorForIntensity(int patternIndex, float patternAlpha, bool useOriginalColors, vec3 originalColor, vec4 patternColor) {
       vec3 backgroundColor = uDarkMode > 0.5 ? vec3(0.0) : vec3(1.0);
 
-      if (patternAlpha < 0.001) {
-        return backgroundColor;
-      }
-
       if (useOriginalColors) {
-        // 彩色图案 - 使用图案纹理本身的颜色
-        return mix(backgroundColor, patternColor, patternAlpha * uAltPatternOpacity);
+        // 彩色图案 - 原网页的处理方式
+        if (patternAlpha < 0.001) {
+          return backgroundColor;
+        }
+
+        if (uUseOriginalSvgColors > 0.5) {
+          // 使用图案纹理本身的颜色
+          return mix(backgroundColor, patternColor.rgb, patternAlpha);
+        } else {
+          // 使用原始图片颜色混合
+          vec3 blendedColor = mix(backgroundColor, originalColor, patternAlpha);
+          return mix(backgroundColor, blendedColor, uAltPatternOpacity);
+        }
       } else {
         // 灰色图案
+        if (patternAlpha < 0.001) {
+          return backgroundColor;
+        }
+
         vec3 color1 = vec3(0.85);
-        vec3 color2 = vec3(0.88);
-        vec3 color3 = vec3(0.91);
-        vec3 color4 = vec3(0.94);
-        vec3 color5 = vec3(0.97);
+        vec3 color2 = vec3(0.91);
+        vec3 color2b = vec3(0.925);
+        vec3 color3 = vec3(0.98);
+        vec3 color4 = vec3(0.99);
 
         if (uDarkMode > 0.5) {
           color1 = vec3(0.33);
-          color2 = vec3(0.4);
-          color3 = vec3(0.5);
-          color4 = vec3(0.6);
-          color5 = vec3(0.7);
+          color2 = vec3(0.33);
+          color2b = vec3(0.33);
+          color3 = vec3(0.33);
+          color4 = vec3(0.33);
         }
 
         if (patternIndex <= 1) return color1;
         else if (patternIndex == 2) return color2;
-        else if (patternIndex == 3) return color3;
-        else if (patternIndex <= 4) return color4;
-        else return color5;
+        else if (patternIndex == 3) return color2b;
+        else if (patternIndex <= 4) return color3;
+        else return color4;
       }
     }
 
@@ -220,13 +234,9 @@ class PatternRenderer {
       else patternIndex = 5;
       patternIndex = clamp(patternIndex, 0, 5);
 
-      // 计算图案 UV - 使用全局坐标保持垂直对齐
-      // 使用全局像素坐标而不是 tile 内坐标，确保垂直方向连续
-      vec2 patternUV = mod(pix / uBaseTileSize, 1.0);
-
-      // 应用变形
-      patternUV += deformColor.rg * uDeformStrength * 0.1;
-      patternUV = fract(patternUV);
+      // 计算图案 UV - 原网页的方式
+      vec2 pixelInTile = mod(pix, uBaseTileSize);
+      vec2 patternUV = pixelInTile / uBaseTileSize;
 
       // 计算过渡因子（基于流体模拟的强度）
       float transitionFactor = 0.0;
@@ -248,15 +258,24 @@ class PatternRenderer {
       int regularAtlasIndex = uPatternAtlasColumns - 1 - patternIndex;
       regularAtlasIndex = clamp(regularAtlasIndex, 0, uPatternAtlasColumns - 1);
 
-      int altPatternIndex = patternIndex;
+      // 第二层的 patternIndex 基于亮度（原网页的阈值）
+      int altPatternIndex;
+      if (lum < 0.1) altPatternIndex = 0;
+      else if (lum < 0.3) altPatternIndex = 1;
+      else if (lum < 0.5) altPatternIndex = 2;
+      else if (lum < 0.7) altPatternIndex = 3;
+      else if (lum < 0.9) altPatternIndex = 4;
+      else altPatternIndex = 5;
+      altPatternIndex = clamp(altPatternIndex, 0, 5);
       int altAtlasIndex = min(altPatternIndex, uAltPatternAtlasColumns - 1);
 
+      // 两层都使用 patternUV（原网页的方式）
       vec4 regularPatternColor = samplePatternAtlas(regularAtlasIndex, patternUV);
       vec4 altPatternColor = sampleAltPatternAtlas(altAtlasIndex, patternUV);
 
-      // 获取两层的颜色
-      vec3 regularColor = getColorForIntensity(patternIndex, regularPatternColor.a, false, vec3(0.0));
-      vec3 altColor = getColorForIntensity(altPatternIndex, altPatternColor.a, true, altPatternColor.rgb);
+      // 获取两层的颜色 - 传入原始图片颜色用于彩色图案混合
+      vec3 regularColor = getColorForIntensity(patternIndex, regularPatternColor.a, false, originalCol, regularPatternColor);
+      vec3 altColor = getColorForIntensity(altPatternIndex, altPatternColor.a, true, originalCol, altPatternColor);
 
       // 混合两层
       vec3 finalColor = mix(regularColor, altColor, transitionFactor);
@@ -325,7 +344,8 @@ class PatternRenderer {
       uFadeThreshold: gl.getUniformLocation(this.program, 'uFadeThreshold'),
       uFadeWidth: gl.getUniformLocation(this.program, 'uFadeWidth'),
       uAltPatternOpacity: gl.getUniformLocation(this.program, 'uAltPatternOpacity'),
-      uEnableFadeTransition: gl.getUniformLocation(this.program, 'uEnableFadeTransition')
+      uEnableFadeTransition: gl.getUniformLocation(this.program, 'uEnableFadeTransition'),
+      uUseOriginalSvgColors: gl.getUniformLocation(this.program, 'uUseOriginalSvgColors')
     };
   }
 
@@ -352,34 +372,35 @@ class PatternRenderer {
   // 创建默认的点阵图案
   createDefaultPattern() {
     const gl = this.gl;
-    const size = 64;
+    const patternSize = 8;  // 每个图案是 8x8 像素，匹配 tile 大小
     const columns = this.config.patternColumns;
-    const width = size * columns;
-    const height = size;
+    const width = patternSize * columns;
+    const height = patternSize;
 
     const data = new Uint8Array(width * height * 4);
 
     // 生成不同密度的点阵图案
     for (let col = 0; col < columns; col++) {
-      const dotSize = 1 + col * 0.5;
+      // 根据列索引决定点的大小（密度）
+      const density = col / (columns - 1);  // 0.0 到 1.0
+      const dotRadius = 0.5 + density * 3.0;  // 点的半径从 0.5 到 3.5
 
-      for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-          const px = col * size + x;
+      for (let y = 0; y < patternSize; y++) {
+        for (let x = 0; x < patternSize; x++) {
+          const px = col * patternSize + x;
           const idx = (y * width + px) * 4;
 
-          // 计算到网格中心的距离
-          const gridSize = 8;
-          const cx = (x % gridSize) - gridSize / 2;
-          const cy = (y % gridSize) - gridSize / 2;
+          // 计算到图案中心的距离
+          const cx = x - patternSize / 2;
+          const cy = y - patternSize / 2;
           const dist = Math.sqrt(cx * cx + cy * cy);
 
           // 根据距离决定是否显示点
-          const alpha = dist < dotSize ? 255 : 0;
+          const alpha = dist < dotRadius ? 255 : 0;
 
-          data[idx] = 128;     // R
-          data[idx + 1] = 128; // G
-          data[idx + 2] = 128; // B
+          data[idx] = 255;     // R
+          data[idx + 1] = 255; // G
+          data[idx + 2] = 255; // B
           data[idx + 3] = alpha; // A
         }
       }
@@ -493,7 +514,8 @@ class PatternRenderer {
     gl.uniform1f(this.uniforms.uFadeThreshold, this.config.fadeThreshold);
     gl.uniform1f(this.uniforms.uFadeWidth, this.config.fadeWidth);
     gl.uniform1f(this.uniforms.uAltPatternOpacity, this.config.altPatternOpacity);
-    gl.uniform1f(this.uniforms.uEnableFadeTransition, 1.0);
+    gl.uniform1f(this.uniforms.uEnableFadeTransition, this.config.enableFadeTransition ? 1.0 : 0.0);
+    gl.uniform1f(this.uniforms.uUseOriginalSvgColors, 1.0);  // 使用图案纹理本身的颜色
 
     // 绘制
     gl.bindVertexArray(this.vao);

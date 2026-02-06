@@ -25,24 +25,25 @@ async function main() {
   fluidSim = new FluidSimulation(gl, {
     simRes: 128,
     dyeRes: 512,
-    densityDissipation: 0.97,
-    velocityDissipation: 0.98,
+    densityDissipation: 0.95,   // 降低，让颜色消散更快
+    velocityDissipation: 0.9,   // 原网页的值，速度消散更快
     pressureIterations: 20,
     curl: 30,
-    splatRadius: 0.005
+    splatRadius: 0.003          // 缩小 splat 半径，范围更小
   });
 
   // 初始化图案渲染器
   patternRenderer = new PatternRenderer(gl, {
     baseTileSize: 8,
-    patternColumns: 6,
-    altPatternColumns: 6,
-    deformStrength: 1.0,
+    patternColumns: 4,      // 原网页是 4 列
+    altPatternColumns: 6,   // 原网页是 6 列
+    deformStrength: 0.05,   // 原网页的值
     darkMode: false,
     imageScale: 1.0,
-    fadeThreshold: 0.05,  // 流体强度超过 5% 时开始显示彩色图案
-    fadeWidth: 0.1,       // 过渡宽度
-    altPatternOpacity: 1.0
+    fadeThreshold: 0.1,     // 原网页的值
+    fadeWidth: 0.05,        // 原网页的值
+    altPatternOpacity: 1.0,
+    enableFadeTransition: true  // 启用平滑过渡
   });
 
   // 加载图片
@@ -61,25 +62,27 @@ async function main() {
 
   // 尝试加载图案纹理
   try {
-    // 加载灰色图案（第一层）
+    // 加载灰色图案（第一层）- 原网页使用 4 列！
     const patternImage = new Image();
     patternImage.src = 'pat3.png';
     await patternImage.decode();
     patternRenderer.setPatternAtlas(patternImage);
-    patternRenderer.config.patternColumns = 6;
+    patternRenderer.config.patternColumns = 4;  // 原网页是 4 列
+    console.log('Loaded gray pattern texture: pat3-original.png (4 columns)');
   } catch (e) {
-    console.log('Using default pattern for layer 1');
+    console.log('Using default pattern for layer 1:', e.message);
   }
 
   try {
-    // 加载彩色图案（第二层）
+    // 加载彩色图案（第二层）- 6 列
     const altPatternImage = new Image();
     altPatternImage.src = 'pat7-colored.png';
     await altPatternImage.decode();
     patternRenderer.setAltPatternAtlas(altPatternImage);
     patternRenderer.config.altPatternColumns = 6;
+    console.log('Loaded colored pattern texture: pat7-original.png (6 columns)');
   } catch (e) {
-    console.log('Using default pattern for layer 2');
+    console.log('Using default pattern for layer 2:', e.message);
   }
 
   // 鼠标事件
