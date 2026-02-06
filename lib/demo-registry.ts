@@ -70,6 +70,18 @@ export const demos: DemoMeta[] = [
       { key: "parallax", label: "Parallax", type: "toggle" },
     ],
   },
+  {
+    slug: "base-pay-pattern",
+    title: "Base Pay Pattern Effect",
+    description: "Interactive dot matrix pattern with fluid simulation, inspired by Base Pay.",
+    tags: ["webgl", "fluid", "pattern", "interactive"],
+    defaultConfig: {
+      darkMode: false,
+    },
+    controls: [
+      { key: "darkMode", label: "Dark Mode", type: "toggle" },
+    ],
+  },
 ];
 
 export function getDemo(slug: string): DemoMeta | undefined {
