@@ -42,6 +42,7 @@ export interface Planet {
   baseColor: string;
   haloColor: string;
   textureUrl: string;
+  textureRotation?: number;
   tags: { icon: LucideIcon; text: string }[];
   stats: PlanetStat[];
   missions: PlanetMission[];
@@ -57,6 +58,7 @@ export const PLANETS: Planet[] = [
     baseColor: "#e07a5f",
     haloColor: "#f4a261",
     textureUrl: "/planet0.png",
+    textureRotation: 1.35,
     tags: [
       { icon: Droplets, text: "SULFUR TRACE" },
       { icon: Thermometer, text: "+290 °C" },
@@ -87,6 +89,7 @@ export const PLANETS: Planet[] = [
     baseColor: "#2a9d8f",
     haloColor: "#48bfe3",
     textureUrl: "/planet1.png",
+    textureRotation: 0.4,
     tags: [
       { icon: Droplets, text: "98% ACID" },
       { icon: Thermometer, text: "+112 °C" },
@@ -111,6 +114,7 @@ export const PLANETS: Planet[] = [
     baseColor: "#8ecae6",
     haloColor: "#bde0fe",
     textureUrl: "/planet2.png",
+    textureRotation: -0.55,
     tags: [
       { icon: Droplets, text: "OXIDIZED MIX" },
       { icon: Thermometer, text: "+18 °C" },
