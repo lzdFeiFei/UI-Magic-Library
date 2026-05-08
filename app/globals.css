@@ -241,6 +241,17 @@ a {
   display: block;
 }
 
+.ripple-refraction-stage {
+  display: block;
+  overflow: hidden;
+  background: #120824;
+}
+
+.ripple-refraction-canvas {
+  cursor: crosshair;
+  touch-action: none;
+}
+
 .demo-fallback {
   color: var(--ink-2);
   font-size: 14px;

@@ -88,6 +88,18 @@ export const demos: DemoMeta[] = [
     description: "Interactive 3D planetary exploration dashboard with orbiting moons and mission panels.",
     tags: ["threejs", "dashboard", "3d", "interactive"],
   },
+  {
+    slug: "ripple-refraction",
+    title: "Pointer Ripple Refraction",
+    description: "Three.js shader ripples that refract a neon scene like liquid glass.",
+    tags: ["threejs", "webgl", "ripple", "refraction"],
+    defaultConfig: {
+      intensity: 22,
+    },
+    controls: [
+      { key: "intensity", label: "Refraction Strength", type: "range", min: 8, max: 44, step: 1 },
+    ],
+  },
 ];
 
 export function getDemo(slug: string): DemoMeta | undefined {
