@@ -82,6 +82,12 @@ export const demos: DemoMeta[] = [
       { key: "darkMode", label: "Dark Mode", type: "toggle" },
     ],
   },
+  {
+    slug: "aeris-planet-explorer",
+    title: "AERIS Planet Explorer",
+    description: "Interactive 3D planetary exploration dashboard with orbiting moons and mission panels.",
+    tags: ["threejs", "dashboard", "3d", "interactive"],
+  },
 ];
 
 export function getDemo(slug: string): DemoMeta | undefined {
