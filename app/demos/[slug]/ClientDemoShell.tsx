@@ -15,6 +15,18 @@ export default function ClientDemoShell({ demo }: Props) {
 
   const DemoComponent = useMemo(() => demoComponents[demo.slug], [demo.slug]);
 
+  if (demo.slug === "indigo-laboratory") {
+    return (
+      <main className="demo-page-fullscreen">
+        {DemoComponent ? (
+          <DemoComponent config={config} />
+        ) : (
+          <div className="demo-stage demo-fallback">Demo component not available.</div>
+        )}
+      </main>
+    );
+  }
+
   return (
     <main className="demo-page">
       <aside className="sidebar">

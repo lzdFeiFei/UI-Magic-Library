@@ -162,6 +162,13 @@ a {
   padding: 28px clamp(16px, 4vw, 40px) 40px;
 }
 
+.demo-page-fullscreen {
+  width: 100vw;
+  min-height: 100vh;
+  background: #000000;
+  overflow: hidden;
+}
+
 .sidebar {
   background: var(--card);
   border: 1px solid var(--card-border);
@@ -250,6 +257,75 @@ a {
 .ripple-refraction-canvas {
   cursor: crosshair;
   touch-action: none;
+}
+
+.sidewave-fluid-stage {
+  position: relative;
+  min-height: 520px;
+  height: 100%;
+  overflow: hidden;
+  background-color: #df72d4;
+  background-size: cover;
+  background-position: center;
+  user-select: none;
+}
+
+.sidewave-fluid-title {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.88);
+  text-align: center;
+  mix-blend-mode: overlay;
+  text-shadow: 0 20px 48px rgba(120, 24, 108, 0.45);
+}
+
+.sidewave-fluid-title h2 {
+  font-size: clamp(48px, 12vw, 128px);
+  line-height: 0.9;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.sidewave-fluid-title p {
+  margin-top: 16px;
+  font-size: clamp(16px, 3vw, 28px);
+  font-weight: 300;
+  letter-spacing: 0.24em;
+}
+
+.sidewave-fluid-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.indigo-laboratory-stage {
+  width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  background: #000000;
+}
+
+.indigo-laboratory-stage > div {
+  min-height: 100%;
+}
+
+.indigo-laboratory-stage .indigo-chapter-link:hover,
+.indigo-laboratory-stage .indigo-chapter-link:focus-visible {
+  outline: 1px solid currentColor;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px currentColor;
 }
 
 .demo-fallback {

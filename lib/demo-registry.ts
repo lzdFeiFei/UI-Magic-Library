@@ -100,6 +100,26 @@ export const demos: DemoMeta[] = [
       { key: "intensity", label: "Refraction Strength", type: "range", min: 8, max: 44, step: 1 },
     ],
   },
+  {
+    slug: "sidewave-fluid",
+    title: "Sidewave Fluid",
+    description: "Hover-reactive WebGL fluid waves over a luminous SIDEWAVE poster scene.",
+    tags: ["webgl", "fluid", "interactive", "poster"],
+    defaultConfig: {
+      splatRadius: 0.25,
+      splatForce: 6000,
+    },
+    controls: [
+      { key: "splatRadius", label: "Ripple Radius", type: "range", min: 0.08, max: 0.5, step: 0.01 },
+      { key: "splatForce", label: "Wave Force", type: "range", min: 1500, max: 9000, step: 250 },
+    ],
+  },
+  {
+    slug: "indigo-laboratory",
+    title: "Indigo Laboratory",
+    description: "Immersive editorial chapter menu with magnetic links, splash reveal, and video-backed hover states.",
+    tags: ["motion", "editorial", "landing", "interactive"],
+  },
 ];
 
 export function getDemo(slug: string): DemoMeta | undefined {
